@@ -1,0 +1,218 @@
+/* Maat Jade — landing
+   Paleta del mesh: 031A1A / 022222 / 03624C / 2DC295 / 00DF82 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #031A1A;
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- Fondo: blobs que derivan lentamente ---------- */
+
+.bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+  opacity: 0.85;
+}
+
+.blob-1 {
+  width: 70vmax;
+  height: 70vmax;
+  left: -20vmax;
+  bottom: -25vmax;
+  background: radial-gradient(circle at center, #00DF82 0%, #2DC295 40%, transparent 70%);
+  animation: drift-1 26s ease-in-out infinite alternate;
+}
+
+.blob-2 {
+  width: 60vmax;
+  height: 60vmax;
+  right: -15vmax;
+  top: -20vmax;
+  background: radial-gradient(circle at center, #03624C 0%, transparent 70%);
+  animation: drift-2 32s ease-in-out infinite alternate;
+}
+
+.blob-3 {
+  width: 55vmax;
+  height: 55vmax;
+  right: -18vmax;
+  bottom: -18vmax;
+  background: radial-gradient(circle at center, #022222 0%, transparent 70%);
+  animation: drift-3 38s ease-in-out infinite alternate;
+}
+
+.blob-4 {
+  width: 45vmax;
+  height: 45vmax;
+  left: 25vmax;
+  top: -10vmax;
+  background: radial-gradient(circle at center, #03624C 0%, transparent 65%);
+  animation: drift-4 30s ease-in-out infinite alternate;
+}
+
+@keyframes drift-1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(12vmax, -10vmax) scale(1.15); }
+  100% { transform: translate(4vmax, -18vmax) scale(0.95); }
+}
+
+@keyframes drift-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-14vmax, 10vmax) scale(1.1); }
+  100% { transform: translate(-6vmax, 16vmax) scale(1.2); }
+}
+
+@keyframes drift-3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-10vmax, -8vmax) scale(1.15); }
+  100% { transform: translate(6vmax, -14vmax) scale(0.9); }
+}
+
+@keyframes drift-4 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(10vmax, 12vmax) scale(1.2); }
+  100% { transform: translate(-8vmax, 6vmax) scale(1); }
+}
+
+/* ---------- Grano de ruido (como el Noise del ejemplo) ---------- */
+
+.noise {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+}
+
+/* ---------- Logo ---------- */
+
+main {
+  position: relative;
+  z-index: 2;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #F2EFE8;
+}
+
+.logo {
+  display: block;
+  width: min(60vw, 420px);
+  height: auto;
+  animation: breathe 7s ease-in-out infinite;
+}
+
+.tagline {
+  margin-top: 1.75rem;
+  font-size: clamp(1rem, 3.5vw, 1.15rem);
+  font-weight: 300;
+  max-width: 28ch;
+  line-height: 1.6;
+  opacity: 0.92;
+}
+
+/* ---------- Botones ---------- */
+
+.links {
+  margin-top: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.links a {
+  display: block;
+  padding: 0.9rem 1.5rem;
+  border: 1px solid rgba(143, 208, 190, 0.7);
+  border-radius: 999px;
+  color: #F2EFE8;
+  text-decoration: none;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.links a:hover,
+.links a:focus-visible {
+  background: #8FD0BE;
+  border-color: #8FD0BE;
+  color: #031A1A;
+  outline: none;
+}
+
+.links a.wsp {
+  background: rgba(0, 223, 130, 0.12);
+  border-color: #00DF82;
+}
+
+.links a.wsp:hover,
+.links a.wsp:focus-visible {
+  background: #00DF82;
+  border-color: #00DF82;
+  color: #031A1A;
+}
+
+/* ---------- Teaser y footer ---------- */
+
+.teaser {
+  margin-top: 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  opacity: 0.85;
+}
+
+.teaser strong {
+  font-weight: 600;
+  color: #8FD0BE;
+}
+
+footer {
+  margin-top: 2.75rem;
+  font-size: 0.8rem;
+  font-weight: 300;
+  opacity: 0.5;
+  letter-spacing: 0.05em;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+/* ---------- Accesibilidad: respetar reduccion de movimiento ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .blob, .logo {
+    animation: none;
+  }
+}
