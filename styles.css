@@ -1,6 +1,15 @@
 /* Maat Jade — landing
    Paleta del mesh: 031A1A / 022222 / 03624C / 2DC295 / 00DF82 */
 
+:root {
+  --deep: #031A1A;
+  --mint: #8FD0BE;
+  --jade-hi: #00DF82;
+  --bone: #F2EFE8;
+  --hair: rgba(143, 208, 190, 0.28);
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -8,14 +17,17 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
-  background: #031A1A;
-  min-height: 100%;
+  background: var(--deep);
+  color: var(--bone);
+  font-family: var(--sans);
+  font-weight: 300;
   display: grid;
-  place-items: center;
+  grid-template-rows: 1fr auto;
+  min-height: 100svh;
 }
 
 /* ---------- Fondo: blobs que derivan lentamente ---------- */
@@ -95,7 +107,7 @@ body {
   100% { transform: translate(-8vmax, 6vmax) scale(1); }
 }
 
-/* ---------- Grano de ruido (como el Noise del ejemplo) ---------- */
+/* ---------- Grano de ruido ---------- */
 
 .noise {
   position: fixed;
@@ -108,23 +120,103 @@ body {
   background-size: 300px 300px;
 }
 
-/* ---------- Logo ---------- */
+/* ---------- Barra superior ---------- */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(0.9rem, 3vw, 1.4rem) clamp(1rem, 4vw, 2rem);
+}
+
+.brand {
+  display: block;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.brand img {
+  display: block;
+  height: clamp(18px, 4vw, 22px);
+  width: auto;
+}
+
+/* el wordmark de la barra aparece solo cuando el logo grande ya se fue */
+body.scrolled .brand {
+  opacity: 0.9;
+  transform: none;
+  pointer-events: auto;
+}
+
+.top-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  padding: 0.55rem 1.05rem;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  background: rgba(3, 26, 26, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--bone);
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.top-cta svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+.top-cta:hover,
+.top-cta:focus-visible {
+  background: var(--mint);
+  border-color: var(--mint);
+  color: var(--deep);
+  outline: none;
+}
+
+.top-cta:focus-visible {
+  outline: 2px solid var(--jade-hi);
+  outline-offset: 3px;
+}
+
+/* ---------- Hero ---------- */
 
 main {
   position: relative;
   z-index: 2;
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: #F2EFE8;
+  padding: clamp(5rem, 14vh, 8rem) 1.5rem clamp(2rem, 6vh, 3rem);
+  color: var(--bone);
 }
 
 .logo {
   display: block;
-  width: min(60vw, 420px);
+  width: min(66vw, 460px);
   height: auto;
   animation: breathe 7s ease-in-out infinite;
 }
@@ -133,74 +225,112 @@ main {
   margin-top: 1.75rem;
   font-size: clamp(1rem, 3.5vw, 1.15rem);
   font-weight: 300;
-  max-width: 28ch;
+  max-width: 26ch;
   line-height: 1.6;
-  opacity: 0.92;
+  opacity: 0.9;
 }
 
-/* ---------- Botones ---------- */
-
-.links {
-  margin-top: 2.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  width: 100%;
-  max-width: 300px;
-}
-
-.links a {
-  display: block;
-  padding: 0.9rem 1.5rem;
-  border: 1px solid rgba(143, 208, 190, 0.7);
+/* CTA unico: blanco, protagonista */
+.cta {
+  margin-top: 2.5rem;
+  display: inline-block;
+  padding: 0.95rem 2.6rem;
   border-radius: 999px;
-  color: #F2EFE8;
+  background: var(--bone);
+  color: var(--deep);
   text-decoration: none;
   font-size: 1rem;
-  letter-spacing: 0.02em;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: 0 8px 28px rgba(3, 26, 26, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.links a:hover,
-.links a:focus-visible {
-  background: #8FD0BE;
-  border-color: #8FD0BE;
-  color: #031A1A;
+.cta:hover,
+.cta:focus-visible {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 34px rgba(3, 26, 26, 0.45);
   outline: none;
 }
 
-.links a.wsp {
-  background: rgba(0, 223, 130, 0.12);
-  border-color: #00DF82;
+.cta:focus-visible {
+  outline: 2px solid var(--jade-hi);
+  outline-offset: 3px;
 }
 
-.links a.wsp:hover,
-.links a.wsp:focus-visible {
-  background: #00DF82;
-  border-color: #00DF82;
-  color: #031A1A;
+/* ---------- Redes: iconos discretos ---------- */
+
+.social {
+  margin-top: 2.25rem;
+  display: flex;
+  gap: clamp(1.5rem, 6vw, 2.75rem);
+}
+
+.social a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  color: var(--bone);
+  opacity: 0.55;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.social a svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.social a span {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.social a:hover,
+.social a:focus-visible {
+  opacity: 1;
+  transform: translateY(-2px);
+  color: var(--mint);
+  outline: none;
+}
+
+.social a:focus-visible {
+  outline: 2px solid var(--jade-hi);
+  outline-offset: 6px;
+  border-radius: 8px;
 }
 
 /* ---------- Teaser y footer ---------- */
 
 .teaser {
-  margin-top: 2.5rem;
-  font-size: 0.95rem;
+  margin-top: 2.75rem;
+  font-size: 0.9rem;
   font-weight: 300;
   letter-spacing: 0.03em;
-  opacity: 0.85;
+  opacity: 0.7;
 }
 
 .teaser strong {
-  font-weight: 600;
-  color: #8FD0BE;
+  font-weight: 500;
+  color: var(--mint);
 }
 
-footer {
-  margin-top: 2.75rem;
-  font-size: 0.8rem;
+.site-footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 1.5rem 2rem;
+  font-size: 0.75rem;
   font-weight: 300;
-  opacity: 0.5;
+  opacity: 0.45;
   letter-spacing: 0.05em;
 }
 
@@ -215,81 +345,7 @@ footer {
   .blob, .logo {
     animation: none;
   }
-}
-/* ============================================================
-   AGREGAR AL FINAL DE styles.css
-   Bloque "Taller abierto" — herramientas publicas
-   ============================================================ */
-
-.workshop {
-  margin-top: 2.25rem;
-  width: 100%;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.workshop-label {
-  font-size: 0.7rem;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #8FD0BE;
-  opacity: 0.75;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  width: 100%;
-}
-
-.workshop-label::before,
-.workshop-label::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: rgba(143, 208, 190, 0.22);
-}
-
-.workshop a {
-  display: block;
-  width: 100%;
-  padding: 0.8rem 1.25rem;
-  border: 1px solid rgba(143, 208, 190, 0.28);
-  border-radius: 16px;
-  background: rgba(45, 194, 149, 0.06);
-  color: #F2EFE8;
-  text-decoration: none;
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-.workshop a em {
-  display: block;
-  font-style: normal;
-  font-size: 0.78rem;
-  font-weight: 300;
-  letter-spacing: 0.02em;
-  opacity: 0.6;
-  margin-top: 0.2rem;
-}
-
-.workshop a:hover,
-.workshop a:focus-visible {
-  background: rgba(45, 194, 149, 0.16);
-  border-color: #8FD0BE;
-  color: #F2EFE8;
-  outline: none;
-}
-
-.workshop a:focus-visible {
-  outline: 2px solid #00DF82;
-  outline-offset: 2px;
-}
-
-.workshop a:hover em,
-.workshop a:focus-visible em {
-  opacity: 0.8;
+  * {
+    transition: none !important;
+  }
 }
