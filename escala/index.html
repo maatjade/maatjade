@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banco de escala · Maat Jade</title>
+<meta name="description" content="Calculadora de escala para miniaturas impresas en 3D: descubre la proporción entre el tamaño real y el tamaño impreso.">
+<meta name="theme-color" content="#031A1A">
+<style>
+/* Maat Jade — herramientas
+   Misma paleta que la landing: 031A1A / 022222 / 03624C / 2DC295 / 00DF82 / 8FD0BE */
+
+:root{
+  --deep:#031A1A;
+  --deep-2:#022222;
+  --forest:#03624C;
+  --jade:#2DC295;
+  --jade-hi:#00DF82;
+  --mint:#8FD0BE;
+  --bone:#F2EFE8;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --glass:rgba(242,239,232,0.04);
+  --hair:rgba(143,208,190,0.22);
+  --hair-hi:rgba(143,208,190,0.55);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  background:var(--deep);color:var(--bone);font-family:var(--sans);
+  font-weight:300;font-size:16px;line-height:1.6;min-height:100%;
+}
+
+/* fondo heredado de la landing, mas contenido para no pelear con la lectura */
+.bg{position:fixed;inset:0;overflow:hidden;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);will-change:transform;opacity:.55}
+.blob-1{width:65vmax;height:65vmax;left:-25vmax;bottom:-30vmax;
+  background:radial-gradient(circle at center,#00DF82 0%,#2DC295 40%,transparent 70%);
+  animation:drift-1 30s ease-in-out infinite alternate}
+.blob-2{width:55vmax;height:55vmax;right:-20vmax;top:-22vmax;
+  background:radial-gradient(circle at center,#03624C 0%,transparent 70%);
+  animation:drift-2 36s ease-in-out infinite alternate}
+@keyframes drift-1{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(6vmax,-14vmax) scale(1.1)}}
+@keyframes drift-2{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(-8vmax,14vmax) scale(1.15)}}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.14;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:300px 300px}
+
+.shell{position:relative;z-index:2;max-width:860px;margin:0 auto;
+  padding:clamp(18px,4vw,34px) clamp(18px,5vw,32px) 72px}
+
+/* ---------- nav ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.home{
+  display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:var(--bone);
+  border:1px solid var(--hair-hi);border-radius:999px;padding:.55rem 1.1rem;font-size:.9rem;
+  letter-spacing:.02em;transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.home:hover,.home:focus-visible{background:var(--mint);border-color:var(--mint);color:var(--deep);outline:none}
+.home span{font-weight:600;letter-spacing:.06em}
+nav.tools{display:flex;gap:8px;flex-wrap:wrap}
+nav.tools a{
+  text-decoration:none;color:var(--bone);opacity:.7;font-size:.85rem;letter-spacing:.02em;
+  border:1px solid transparent;border-radius:999px;padding:.5rem .95rem;
+  transition:opacity .2s ease,border-color .2s ease,background .2s ease;
+}
+nav.tools a:hover,nav.tools a:focus-visible{opacity:1;border-color:var(--hair);outline:none}
+nav.tools a[aria-current="page"]{
+  opacity:1;background:rgba(0,223,130,.12);border-color:var(--jade-hi);color:var(--bone)}
+
+/* ---------- encabezado ---------- */
+header.hero{margin-top:clamp(38px,8vw,64px)}
+.eyebrow{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--mint);display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.eyebrow::after{content:"";height:1px;flex:1;background:var(--hair)}
+h1{font-size:clamp(2.1rem,7vw,3.4rem);font-weight:300;line-height:1.05;letter-spacing:-.02em;margin-bottom:14px}
+h1 strong{font-weight:600;color:var(--mint)}
+.lede{max-width:52ch;font-size:clamp(1rem,3.2vw,1.1rem);opacity:.82}
+
+/* ---------- paneles ---------- */
+.panel{
+  background:var(--glass);border:1px solid var(--hair);border-radius:20px;
+  padding:clamp(20px,4vw,28px);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  margin-top:clamp(26px,5vw,38px)}
+h2{font-size:1.05rem;font-weight:600;letter-spacing:.01em;margin-bottom:6px}
+.hint{font-size:.88rem;opacity:.65;margin-bottom:20px;max-width:56ch}
+
+/* ---------- campos ---------- */
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px}
+label{display:block;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;
+  text-transform:uppercase;opacity:.6;margin-bottom:9px}
+.row{display:flex;gap:8px}
+input,select{
+  font-family:var(--mono);font-size:1.15rem;color:var(--bone);font-weight:400;
+  background:rgba(2,34,34,.55);border:1px solid var(--hair);border-radius:12px;
+  padding:.7rem .85rem;width:100%;min-width:0;transition:border-color .2s ease}
+select{font-size:.95rem;flex:0 0 84px;width:84px}
+input:hover,select:hover{border-color:var(--hair-hi)}
+input:focus-visible,select:focus-visible,button:focus-visible,tr:focus-visible{
+  outline:2px solid var(--jade-hi);outline-offset:2px}
+
+/* ---------- resultado ---------- */
+.readout{
+  margin-top:26px;padding-top:24px;border-top:1px solid var(--hair);
+  display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px clamp(22px,5vw,46px)}
+.k{display:block;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;
+  text-transform:uppercase;opacity:.6;margin-bottom:8px}
+.big{font-size:clamp(2.8rem,11vw,4.6rem);font-weight:600;line-height:.9;letter-spacing:-.035em;color:var(--mint)}
+.big.warn{color:#E8C36A;font-size:clamp(1.3rem,5vw,1.9rem);font-weight:300}
+.sec{font-family:var(--mono);font-size:.9rem;opacity:.7}
+
+/* ---------- diagrama ---------- */
+svg.bench{display:block;width:100%;height:auto;overflow:visible}
+.tickline{stroke:rgba(143,208,190,.14);stroke-width:1}
+.tickmaj{stroke:rgba(143,208,190,.3);stroke-width:1}
+.ticktxt{font-family:var(--mono);font-size:9.5px;fill:rgba(242,239,232,.55)}
+.fig{fill:var(--jade-hi)}
+.fig-ghost{fill:none;stroke:rgba(143,208,190,.5);stroke-width:1;stroke-dasharray:3 3}
+.cal{stroke:var(--mint);stroke-width:1}
+.caltxt{font-family:var(--mono);font-size:11px;fill:var(--mint)}
+.ghosttxt{font-family:var(--mono);font-size:11px;fill:rgba(143,208,190,.6)}
+
+/* ---------- chips ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{
+  background:rgba(2,34,34,.5);border:1px solid var(--hair);border-radius:14px;
+  padding:.7rem .9rem;font-family:var(--mono);font-size:.85rem;cursor:pointer;
+  color:var(--bone);text-align:left;transition:border-color .2s ease,background .2s ease}
+.chip:hover{border-color:var(--hair-hi)}
+.chip.best{background:rgba(0,223,130,.12);border-color:var(--jade-hi)}
+.chip b{font-weight:500;color:var(--mint)}
+.chip.best b{color:var(--jade-hi)}
+.chip small{display:block;font-family:var(--sans);font-size:.78rem;opacity:.65;margin-top:4px;font-weight:300}
+
+/* ---------- tabla ---------- */
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.85rem;min-width:420px}
+th,td{text-align:left;padding:.6rem .7rem;border-bottom:1px solid rgba(143,208,190,.12)}
+th{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;opacity:.55;font-weight:400}
+td.n{color:var(--mint)}
+td.d{font-family:var(--sans);opacity:.65;font-weight:300}
+tbody tr{cursor:pointer;transition:background .15s ease}
+tbody tr:hover{background:rgba(143,208,190,.06)}
+.empty{font-size:.88rem;opacity:.6}
+
+/* ---------- pie ---------- */
+footer{
+  position:relative;z-index:2;max-width:860px;margin:0 auto;
+  padding:26px clamp(18px,5vw,32px) 48px;border-top:1px solid var(--hair);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-size:.78rem;letter-spacing:.04em;opacity:.55}
+footer a{color:var(--mint);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .blob{animation:none}
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+</div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="shell">
+
+  <div class="topbar">
+    <a class="home" href="/"><span>MAAT JADE</span> · inicio</a>
+    <nav class="tools" aria-label="Herramientas">
+      <a href="/escala/" aria-current="page">Banco de escala</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <p class="eyebrow">Herramientas de taller</p>
+    <h1>Banco de <strong>escala</strong></h1>
+    <p class="lede">Dos medidas y sabes en qué proporción trabajaste. Pon cuánto mide la referencia en la vida real y cuánto mide la pieza que salió de la impresora.</p>
+  </header>
+
+  <div class="panel">
+    <div class="fields">
+      <div>
+        <label for="real">Tamaño real</label>
+        <div class="row">
+          <input type="number" id="real" value="1.65" step="any" min="0" inputmode="decimal">
+          <select id="realU" aria-label="Unidad del tamaño real">
+            <option value="1000">m</option><option value="10">cm</option><option value="1">mm</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label for="print">Tamaño impreso</label>
+        <div class="row">
+          <input type="number" id="print" value="10" step="any" min="0" inputmode="decimal">
+          <select id="printU" aria-label="Unidad del tamaño impreso">
+            <option value="10">cm</option><option value="1">mm</option><option value="1000">m</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="readout" aria-live="polite">
+      <div><span class="k">Escala</span><span class="big" id="out">1:16.5</span></div>
+      <div><span class="k">Detalle</span><span class="sec" id="sub">—</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Comparación en la mesa</h2>
+    <p class="hint">La silueta sólida es tu pieza. La punteada es un humano de 1.75 m a la misma escala, para saber si tus figuras conviven.</p>
+    <svg class="bench" id="svg" viewBox="0 0 800 340" role="img" aria-labelledby="svgt">
+      <title id="svgt">Regla en milímetros con la pieza impresa y una figura humana de referencia a la misma escala.</title>
+    </svg>
+  </div>
+
+  <div class="panel">
+    <h2>Escalas estándar más cercanas</h2>
+    <p class="hint">Toca una para ajustar el tamaño impreso a esa escala exacta.</p>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Tabla de referencia</h2>
+    <p class="hint">Las escalas que más se usan en coleccionables, wargame y maquetas. Toca una fila para llevarla al cálculo.</p>
+    <div class="scroller">
+      <table>
+        <thead><tr><th>Escala</th><th>Humano 1.75 m</th><th>Dónde se usa</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span>Maat Jade · equilibrio en cada pieza</span>
+  <span><a href="/">maatjade.com</a></span>
+</footer>
+
+<script>
+(function(){
+  var STD=[6,8,9,10,12,16,18,20,22,24,25,32,35,43,48,50,56,64,72,76,87,100,144,150,160,200,285,350,700];
+  var USE={6:"figuras de acción 12\"",8:"figuras grandes",9:"figuras 200 mm",10:"coleccionables",12:"action figures 6\", muñecas",16:"figuras 4\"",18:"autos die-cast grandes",20:"kits de autos y motos",22:"figuras 80 mm",24:"autos, aviones, dioramas",25:"figuras 70 mm",32:"wargame heroico moderno",35:"militaria y tanques",43:"die-cast estándar",48:"aviones",50:"arquitectura de detalle",56:"wargame 32 mm",64:"wargame 28 mm heroico",72:"aviones y soldados chicos",76:"trenes escala OO",87:"trenes escala HO",100:"maquetas de arquitectura",144:"aviones micro",150:"arquitectura",160:"trenes escala N",200:"arquitectura y urbanismo",285:"wargame 6 mm",350:"barcos",700:"barcos y puertos"};
+  var HUMAN=1750;
+  var $=function(i){return document.getElementById(i)};
+
+  function fmt(mm){
+    if(!isFinite(mm)||mm<=0) return "—";
+    if(mm>=1000) return (mm/1000).toFixed(2)+" m";
+    if(mm>=10) return (mm/10).toFixed(2)+" cm · "+mm.toFixed(1)+" mm";
+    return mm.toFixed(1)+" mm";
+  }
+  function fmtShort(mm){
+    if(!isFinite(mm)||mm<=0) return "—";
+    if(mm>=1000) return (mm/1000).toFixed(2)+" m";
+    if(mm>=10) return (mm/10).toFixed(1)+" cm";
+    return mm.toFixed(1)+" mm";
+  }
+  function fmtScale(s){
+    if(!isFinite(s)||s<=0) return "—";
+    if(s>=100) return "1:"+Math.round(s);
+    if(s>=10) return "1:"+(Math.round(s*10)/10);
+    return "1:"+(Math.round(s*100)/100);
+  }
+
+  function calc(){
+    var real=parseFloat($("real").value)*parseFloat($("realU").value);
+    var prt =parseFloat($("print").value)*parseFloat($("printU").value);
+    var ok=real>0&&prt>0&&isFinite(real)&&isFinite(prt);
+    var sc=ok?real/prt:NaN;
+    $("out").textContent = ok?fmtScale(sc):"Faltan medidas";
+    $("out").className   = "big"+(ok?"":" warn");
+    $("sub").textContent = ok?(fmt(prt)+" impresos representan "+fmt(real)):"—";
+    chips(sc); draw(prt,sc);
+  }
+
+  function applyScale(s){
+    var real=parseFloat($("real").value)*parseFloat($("realU").value);
+    if(!(real>0)) return;
+    var mm=real/s;
+    if(mm>=10){ $("printU").value="10"; $("print").value=(Math.round(mm/10*100)/100); }
+    else { $("printU").value="1"; $("print").value=(Math.round(mm*10)/10); }
+    calc();
+  }
+
+  function chips(sc){
+    var w=$("chips"); w.innerHTML="";
+    if(!(sc>0)||!isFinite(sc)){ w.innerHTML='<p class="empty">Completa las medidas para ver las escalas cercanas.</p>'; return; }
+    STD.slice().sort(function(a,b){return Math.abs(a-sc)-Math.abs(b-sc)}).slice(0,4).forEach(function(s,i){
+      var diff=((s-sc)/sc)*100;
+      var b=document.createElement("button");
+      b.className="chip"+(i===0?" best":"");
+      b.innerHTML='<b>1:'+s+'</b> &nbsp;'+(diff>=0?"+":"")+diff.toFixed(1)+'%<small>'+(USE[s]||"escala técnica")+'</small>';
+      b.onclick=function(){ applyScale(s) };
+      w.appendChild(b);
+    });
+  }
+
+  var FIG="M20 15 C14 15 11 18 10 22 L5 40 L8.5 41.5 L12 28 L12 52 L15 99 L19 99 L20 68 L21 99 L25 99 L28 52 L28 28 L31.5 41.5 L35 40 L30 22 C29 18 26 15 20 15 Z";
+  function figure(x,hPx,cls){
+    var s=hPx/114;
+    return '<g transform="translate('+x+','+(300-hPx)+') scale('+s+')" class="'+cls+'">'+
+      '<circle cx="20" cy="8" r="7"/><path d="'+FIG+'"/></g>';
+  }
+  function niceMax(v){
+    var steps=[10,20,50,100,150,200,300,500,750,1000,1500,2000,3000,5000];
+    for(var i=0;i<steps.length;i++){ if(v<=steps[i]*0.92) return steps[i]; }
+    return Math.ceil(v/1000)*1000;
+  }
+
+  function draw(prt,sc){
+    var svg=$("svg");
+    var head='<title id="svgt">Regla en milímetros con la pieza impresa y una figura humana de referencia a la misma escala.</title>';
+    if(!(prt>0)||!(sc>0)||!isFinite(prt)||!isFinite(sc)){ svg.innerHTML=head; return; }
+    var humanPrint=HUMAN/sc;
+    var max=niceMax(Math.max(prt,humanPrint));
+    var px=function(mm){ return 300*Math.min(mm/max,1) };
+    var g=head;
+    for(var i=0;i<=10;i++){
+      var mm=max*i/10, y=300-px(mm);
+      g+='<line x1="46" y1="'+y+'" x2="790" y2="'+y+'" class="'+(i%5===0?"tickmaj":"tickline")+'"/>';
+      g+='<text x="40" y="'+(y+3.5)+'" text-anchor="end" class="ticktxt">'+(max>=1000?(mm/10).toFixed(0)+" cm":mm.toFixed(0)+" mm")+'</text>';
+    }
+    var pH=px(prt);
+    g+=figure(90,pH,"fig");
+    g+='<line x1="76" y1="'+(300-pH)+'" x2="76" y2="300" class="cal"/>';
+    g+='<line x1="71" y1="'+(300-pH)+'" x2="81" y2="'+(300-pH)+'" class="cal"/>';
+    g+='<line x1="71" y1="300" x2="81" y2="300" class="cal"/>';
+    g+='<text x="90" y="'+(300-pH-10)+'" class="caltxt">tu pieza · '+fmtShort(prt)+'</text>';
+    var hH=px(humanPrint);
+    g+=figure(260,hH,"fig-ghost");
+    g+='<text x="260" y="'+(300-hH-10)+'" class="ghosttxt">humano 1.75 m a '+fmtScale(sc)+' · '+fmtShort(humanPrint)+'</text>';
+    g+='<text x="790" y="326" text-anchor="end" class="ticktxt">'+fmtScale(sc)+' · referencia real '+fmtShort(prt*sc)+'</text>';
+    svg.innerHTML=g;
+  }
+
+  function table(){
+    var t=$("tbody"); t.innerHTML="";
+    STD.forEach(function(s){
+      var tr=document.createElement("tr");
+      tr.tabIndex=0;
+      tr.innerHTML='<td class="n">1:'+s+'</td><td>'+fmtShort(HUMAN/s)+'</td><td class="d">'+(USE[s]||"—")+'</td>';
+      var go=function(){ applyScale(s); window.scrollTo({top:0,behavior:"smooth"}); };
+      tr.onclick=go;
+      tr.onkeydown=function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } };
+      t.appendChild(tr);
+    });
+  }
+
+  ["real","realU","print","printU"].forEach(function(id){
+    $(id).addEventListener("input",calc); $(id).addEventListener("change",calc);
+  });
+  table(); calc();
+})();
+</script>
+</body>
+</html>
